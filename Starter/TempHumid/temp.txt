@@ -1,0 +1,70 @@
+        /// <summary>
+        /// The last measured temperature in degrees Celsius
+        /// </summary>
+        public double tempC
+        {
+            get 
+            {
+                return _temp;
+            }
+        }
+
+        /// <summary>
+        /// The last measured temperature in degrees Fahrenheit
+        /// </summary>
+        public double tempF
+        {
+            get
+            {
+                return _temp * 1.8 + 32;
+            }
+        }
+
+        /// <summary>
+        /// The last percent humidity measurement
+        /// </summary>
+        public double hum
+        {
+            get
+            {
+                return _hum;
+            }
+        }
+
+        /// <summary>
+        /// The heat index corrected temperature in degrees Celsius 
+        /// </summary>
+        public double heatIndexC
+        {
+            get
+            {
+                double temp = tempF;
+                if (temp >= 80 && _hum >= 40)
+                {
+                    double tempSQ = System.Math.Pow(temp, 2);
+                    double humSQ = System.Math.Pow(_hum, 2);
+                    return ((-42.379 + (2.04901523 * temp) + (10.14333127 * _hum) + (-0.22475541 * _hum * temp) + (-0.00683783 * tempSQ) + (-.05481717 * humSQ) + (0.00122874 * _hum * tempSQ) + (0.00085282 * temp * humSQ) + (-0.00000199 * humSQ * tempSQ)) - 32) / 1.8;
+                }
+                else
+                    return _temp;
+            }
+        }
+
+        /// <summary>
+        /// The heat index corrected temperature in degrees Fahrenheit 
+        /// </summary>
+        public double heatIndexF
+        {
+            get
+            {
+                double temp = tempF;
+                if (temp >= 80 && _hum >= 40)
+                {
+                    double tempSQ = System.Math.Pow(temp, 2);
+                    double humSQ = System.Math.Pow(_hum, 2);
+                    return -42.379 + (2.04901523 * temp) + (10.14333127 * _hum) + (-0.22475541 * _hum * temp) + (-0.00683783 * tempSQ) + (-.05481717 * humSQ) + (0.00122874 * _hum * tempSQ) + (0.00085282 * temp * humSQ) + (-0.00000199 * humSQ * tempSQ);
+                }
+                else
+                    return temp;
+            }
+        }
