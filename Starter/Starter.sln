@@ -8,6 +8,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HttpFileServer", "FileServer\HttpFileServer.csproj", "{DF631FEA-4EF4-449D-8C01-4FF8C6F7ED32}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControllerNetMF43", "Controller\ControllerNetMF43.csproj", "{51130FB0-D0CE-4FDE-9FB3-034BDF7FFFDA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{21292FFA-DDB8-402A-923C-E9F54F786934} = {21292FFA-DDB8-402A-923C-E9F54F786934}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TempHumid", "TempHumid\TempHumid.csproj", "{21292FFA-DDB8-402A-923C-E9F54F786934}"
 EndProject

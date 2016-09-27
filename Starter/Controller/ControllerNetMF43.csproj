@@ -57,5 +57,9 @@
       <Project>{AA398E97-E06D-44A5-860E-34D5CCD523D5}</Project>
       <Name>HttpLibraryV3</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TempHumid\TempHumid.csproj">
+      <Project>{21292FFA-DDB8-402A-923C-E9F54F786934}</Project>
+      <Name>TempHumid</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

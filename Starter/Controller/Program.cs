@@ -11,6 +11,8 @@ using System.IO;
 using HttpLibrary;
 using HttpFileServer;
 
+using TempHumid;
+
 namespace Home
 {
     public class Program
@@ -18,11 +20,19 @@ namespace Home
         static HttpServer Server;                   // server object
         static Credential ServerCredential;         // server security
         static Configuration ServerConfiguration;   // configuration settings
-        static bool status = false;                 // on board led status
+        static DhtSensor Sensor;                    //humidity and temperature sensor
+        
+        static Double temperature = 0;              // graus Celsius
+        static Double humidity = 0;                 // %
+
+        static string cmd = "on";                      // On board led status
+        static string thingStatus = "DHT Sensor: Ligado";   // Thing status
 
         public static void Main()
         {
+            TimeCounter timeCounter = new TimeCounter();
             TimeSpan elapsed = TimeSpan.Zero;
+            int i = 0;
 
             // Try to get clock at system start
             try
@@ -39,6 +49,9 @@ namespace Home
             // On board led
             OutputPort onBoardLed = new OutputPort(Pins.ONBOARD_LED, false);
 
+            // Humidity and Temperature
+            Sensor = new Dht22Sensor(Pins.GPIO_PIN_D0, Pins.GPIO_PIN_D1, PullUpResistor.Internal);
+            
             Thread.Sleep(1000);
 
             // Web Server
@@ -54,10 +67,26 @@ namespace Home
 
             while (true)
             {
-                // null task
+                timeCounter.Start();
+                {
+                    elapsed += timeCounter.Elapsed;
+                    if (elapsed.Seconds >= 1)
+                    {
+                        if (Sensor.Read())
+                        {
+                            temperature = Sensor.Temperature;
+                            humidity = Sensor.Humidity;
+                            thingStatus = "DHT Sensor: RH = " + humidity.ToString("F1") + "%  Temp = " + temperature.ToString("F1") + "°C " + "Cmd = " + cmd.ToString();
+                        }
+                        elapsed = TimeSpan.Zero;
+                        onBoardLed.Write((i++ & 0x01) == 0); // blink on board led
 
-                onBoardLed.Write(status);
-                Thread.Sleep(500);
+                        #region nulltask
+
+                        #endregion
+                    }
+                }
+                timeCounter.Stop();
                 
             }
         }
@@ -69,14 +98,14 @@ namespace Home
                 switch (Request.RequestedCommand.ToLower())
                 {
                     case "on":
-                        status = true;      // on board led ON
+                        cmd = "ON";     // command ON
                         break;
                     case "off":
-                        status = false;     // on board led OFF
+                        cmd = "OFF";     // command OFF
                         break;
-                } 
+                }
 
-                Response.WriteFilesList("<br>" + "Comando " + Request.RequestedCommand.ToLower() + ": Status = " + status.ToString());
+                Response.WriteFilesList(thingStatus + "<br><br>" + "Comando " + Request.RequestedCommand.ToLower() + ": Status = " + cmd);
             }
             else if (Request.RequestedFile != null)
             {
@@ -92,7 +121,8 @@ namespace Home
             }
             else
             {
-                Response.WriteFile(Request.FilesPath + "home.html"); // TODO: product page
+                Response.WriteFilesList(thingStatus); 
+                //Response.WriteFile(Request.FilesPath + "home.html"); // TODO: product page
             }
         }
 
